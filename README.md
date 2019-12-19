@@ -5,3 +5,8 @@
 - 以后文章将全部会在这里发出
 
 - 个人邮箱 sshang141@163.com
+
+
+
+# 文章
+- ## [跨域之CORS]('./articles/will/跨域之CORS.md')
