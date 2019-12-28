@@ -1,0 +1,5 @@
+articles/ings
+node_modules
+package.json
+.prettierrc
+*.sh
