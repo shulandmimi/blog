@@ -10,4 +10,5 @@
 
 # 文章
 - ## [跨域之CORS](./articles/will/跨域之CORS.md)
+- ## [定制一个自己的规范](./articles/will/规范.md)
 
