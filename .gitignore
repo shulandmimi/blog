@@ -1,5 +1,6 @@
 articles/ings
-node_modules
+articles/md
+node_modules/
 package.json
 .prettierrc
 *.sh
