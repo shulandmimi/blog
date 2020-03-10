@@ -9,9 +9,8 @@
 
 > 不要把这里看作为技术分享，否则，你会失望。这里只会发出我的总结或感想，然后给它们汇总成列表，这里的大部分是别人已经说透的知识。
 
-
-
-# 文章
-- ## [跨域之CORS](./articles/will/跨域之CORS.md)
-- ## [定制一个自己的规范](./articles/will/规范.md)
-- ## [webpack分割代码](./articles/will/webpack打包分割代码.md)
+## 文章
+- #### [跨域之CORS](./articles/will/跨域之CORS.md)
+- #### [定制一个自己的规范](./articles/will/规范.md)
+- #### [webpack分割代码](./articles/will/webpack打包分割代码.md)
+- #### [webpack打包的进一步优化](./articles/will/webpack打包的进一步优化.md)
