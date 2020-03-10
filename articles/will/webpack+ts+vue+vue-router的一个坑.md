@@ -96,7 +96,7 @@ import webpack from 'webpack';
 在思考一下，webpack入口以后的文件就不由ts-node来编译了，而是由ts-loader来编译，
 ts-laoder编译的源码是和tsc编译的是一样的（已验证，在ts-loader源码的主入口函数中可以打印观看）那么ts-loader的配置会引用目录顶级的tsconfig.json，但是，这个顶级目录又不能更改，否则webpack都调用不起来
 
-## 最总解决
+## 最终解决
 在看一遍ts-loader的文档，可以自行引用一个配置（configFile(只能路径)），否则就使用最顶级的
 ```json
 // tsconfig.prod.json
