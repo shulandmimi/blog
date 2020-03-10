@@ -13,4 +13,4 @@
 - #### [跨域之CORS](./articles/will/跨域之CORS.md)
 - #### [定制一个自己的规范](./articles/will/规范.md)
 - #### [webpack分割代码](./articles/will/webpack打包分割代码.md)
-- #### [webpack打包的进一步优化](./articles/will/webpack打包的进一步优化.md)
+- #### [webpack+ts+vue+vue-router的一个坑](./articles/will/webpack+ts+vue+vue-router的一个坑.md)
