@@ -14,6 +14,7 @@
 - [选择，目标！](https://github.com/shulandmimi/blog/issues/3)
 - [copy dom时，如何copy 事件](https://github.com/shulandmimi/blog/issues/5)
 - [vite，根据浏览器es module特性建立起来的脚手架工具](https://github.com/shulandmimi/blog/issues/6)
+- [vscode调试，开启新世界](https://github.com/shulandmimi/blog/issues/7)
 
 
 ## 书籍阅读列表
