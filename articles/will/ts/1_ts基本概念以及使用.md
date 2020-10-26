@@ -14,7 +14,7 @@ a = '10';
 a = false;
 ```
 
-js 不会用声明时值的类型去约束在之后赋值的变量
+js 不会用声明时值的类型去约束在之后变量赋值时的类型
 
 可以说 `类型是由变量保存的值来判断的`，而不是 `根据变量来判断的`
 
@@ -33,12 +33,13 @@ a.slice(0, 20);
 
 如上，a.slice 在`a = 20`时，就可能会抛出错误
 
+<br/>
+
 > emmm，好像这也好像表达不出类型到底有什么作用
 
-<br/><br/>
+大家可能平时写不出这样的代码 ( 0 ^ 0 )，我们看下面
 
-> 上面这组代码就很诡异，大家可能平时写不出这样的代码 ( 0 ^ 0 )
-
+<br/>
 
 ```js
 let a = 10;
@@ -61,9 +62,9 @@ js 没有语言层面的类型检测，所以无论是`错误检测工具`还是
 
 <br/>
 
-Ts 通过另外一种方式在开发时给代码添加类型以及类型推断等功能，在编译时则将源码转换为 js，达到增强开发，但不涉及功能的目的。
+ts 通过另外一种方式在开发时给代码添加类型以及类型推断等功能，在编译时则将源码转换为 js 同时清除掉类型，达到增强开发，但不涉及运行时的目的。
 
-另外，Ts 的类型系统也是可选的，现在 npm 很多软件包都添加了类型声明，在 `现代编辑器` 的帮助下，即便不使用 ts 也可以享受到 ts 的类型推断。
+另外，ts 的类型系统也是可选的，现在 npm 很多软件包都添加了类型声明，在 `现代编辑器` 的帮助下，即便不使用 ts 也可以享受到 ts 的类型推断。
 
 ## 回到 Typescript
 
@@ -84,7 +85,7 @@ array
 function
 ```
 
-以上这些就是 js 的所有类型，那么，接下来在写出它们在 ts 中的对应的类型
+以上这些就是 js 的所有类型，下面我们写出它们在 ts 中的对应的类型
 
 ```ts
 number -> number
@@ -106,28 +107,29 @@ any
 
 以上这些大家知道有就行了，不用死记，用着用着就熟悉了
 
+当我们知道的类型后，就需要上手试试了
+
 ## 类型的使用
 
 #### 数字 number
 
 ```ts
-// 覆盖全部数字的方式
+// number 代表覆盖所有数字
 const status: number = 1;
 
-// 指定某个数字
+// 指定某个或多个数据
 const status: 101 | 200 | 201 = 101;
 ```
 
 ### 字符串 string
 
 ```ts
-// 覆盖全部字符串的方式
 let name: string = 'shange';
 name = 'liu';
 name = 'wang';
 name = 123; // ❌
 
-// 指定变量只能是某个字符串
+// 指定后续赋值只能是枚举时的字符串
 let name: 'shange' | 'liu' | 'wang' = 'shang';
 name = 'liu';
 name = 'wang';
@@ -176,13 +178,14 @@ person.name = 'shange'; // ❌
 
 ```ts
 // 不确定key的对象 -> 又名，索引器
+// 字符串索引器
 const person: { [key: string]: any } = {};
-
+// 数字索引器
 const person: { [key: number]: any } = {};
-
+// 符号索引器
 const person: { [key: symbol]: any } = {};
 
-// 多种类型不确定key类型的对象
+// 多种类型的索引器
 const person: { [key: string]: any; [key: number]: any } = {};
 ```
 
@@ -222,31 +225,40 @@ const person: Person = ['shange', 19, msg => console.log(msg)]; // ❌
 
 ### function
 
-```ts
-// 参数
-function show(show: boolean, delay: number) {
-    if (show) {
-        // xxx
-    }
-    if (delay) {
-        // xxx
-    }
-}
+**必填参数**
 
-// 可选的参数
-// 可选的参数只能放在最后一个必选参数的后面
+```ts
+function show(show: boolean, delay: number) {
+    // ...
+}
+```
+
+**可选参数**
+
+注意，可选的参数必须放在最后一个必选参数的后面！！！
+
+```ts
+// 可选的参数只能放在最后一个必选参数的后面 !!!
 function show(show?: boolean, delay: number) {} // ❌
 function show(show?: boolean, delay?: number) {} // success
 
 // 另外一种可选的参数
 // xxx | undefined 和 ?: 是一样的作用
 function show(show?: boolean, delay: number | undefined) {}
+```
 
+**限制返回类型的函数**
+
+```ts
 // 限制返回类型的函数
 function show(show, delay): number {
     return 1;
 }
+```
 
+**使用变量接收函数**
+
+```ts
 // 变量接受匿名函数
 const show = (show: boolean, delay: number) => void 0;
 
@@ -305,10 +317,11 @@ person = Symbol(1);
 
 #### never
 
-**作用**： (空 | 空集)类型
+**作用**：
 
-1. 不会被采用的 never
-2. [避免业务漏洞 [知乎-尤雨溪的回答]](https://www.zhihu.com/question/354601204)
+1. (空 | 空集)类型
+2. 不会被采用的 never
+3. [避免业务漏洞 [知乎-尤雨溪的回答]](https://www.zhihu.com/question/354601204)
 
 ```ts
 // 特点
