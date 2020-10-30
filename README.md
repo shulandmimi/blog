@@ -18,6 +18,8 @@
 
 -   [ts 系列](./articles/will/ts)
     1. [ts 基本概念以及使用](./articles/will/ts/1_ts基本概念以及使用.md)
+    2. [类型声明以及组合用法](./articles/will/ts/2_类型声明以及组合用法.md)
+    3. [类](./articles/will/ts/3_类.md)
 
 ## 书籍阅读列表
 
