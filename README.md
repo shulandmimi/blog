@@ -21,6 +21,7 @@
     2. [类型声明以及组合用法](./articles/will/ts/2_类型声明以及组合用法.md)
     3. [类](./articles/will/ts/3_类.md)
     4. [泛形与重载](articles/will/ts/4_泛形与重载.md)
+    5. [各种关键字以及方法](articles/will/ts/5_各种关键字以及方法.md)
 
 ## 书籍阅读列表
 
