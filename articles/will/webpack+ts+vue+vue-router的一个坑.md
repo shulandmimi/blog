@@ -1,16 +1,19 @@
-# Vue 与TS 的配置大坑
-## 起因:
-> 在不久前的一个小demo，使用webpack + ts + vue搭建了一个环境，在完事后发现打包的主入口文件太大，使用webpack的`optimization.splitChunks`拆分一下引入的包，但是，不尽人意，看了一下webpack文档和vue文件，又有了一个思路，从vue-router的路由懒加载下手，这时，问题就出现了
+# Vue 与 TS 的配置大坑
 
+## 起因:
+
+> 在不久前的一个小 demo，使用 webpack + ts + vue 搭建了一个环境，在完事后发现打包的主入口文件太大，使用 webpack 的`optimization.splitChunks`拆分一下引入的包，但是，不尽人意，看了一下 webpack 文档和 vue 文件，又有了一个思路，从 vue-router 的路由懒加载下手，这时，问题就出现了
 
 ## 环境:
-- webpack
-- typescript
-- vue
-- vue-router
-- babel
+
+-   webpack
+-   typescript
+-   vue
+-   vue-router
+-   babel
 
 ## 出现问题的地方
+
 ```js
 {
     test: /\.ts$/,
@@ -36,9 +39,10 @@
 ```
 
 看起来没啥问题
-这里的逻辑就是eslint-loader校验源码后没问题交给ts-loader，ts-loader进一步转换ts语法为js语法，最后交给babel-loader完成最终的转换
+这里的逻辑就是 eslint-loader 校验源码后没问题交给 ts-loader，ts-loader 进一步转换 ts 语法为 js 语法，最后交给 babel-loader 完成最终的转换
 
 但是，我们配置完后懒加载路由后
+
 ```js
 const About = () => import(/* webpackChunkName: 'ImportFuncDemo' */ '../views/About.vue');
 export default new VueRouter({
@@ -62,55 +66,54 @@ export default new VueRouter({
     ],
 });
 ```
-按下npm run build
+
+按下 npm run build
 ![打包后的文件](../../assets/image/webpack+ts+vue+vue-router的一个坑/打包后的文件.jpg);
 
-import 的方式居然没有打包出来，难道webpack的魔法注释骗人？（怀着怀疑的态度读了几篇文章，又过了一遍Vue、webpack代码分割这篇文档任然没有什么苗头）
+import 的方式居然没有打包出来，难道 webpack 的魔法注释骗人？（怀着怀疑的态度读了几篇文章，又过了一遍 Vue、webpack 代码分割这篇文档任然没有什么苗头）
 
 在更改了一些配置和代码后，仍然还是这样
 
 没办法了吗？
 
-
 ## 思路出现
 
-仔细分析了下，既然webpack的魔法注释是注释，难道是ts-loader中的compilerOptions.removeComments 给删了？
+仔细分析了下，既然 webpack 的魔法注释是注释，难道是 ts-loader 中的 compilerOptions.removeComments 给删了？
 
-直接用tsc(typescript的cli工具)运行，打包出来后注释并没有影响，但是，仔细一瞅tsc编译过后的源码就有点奇怪了，
+直接用 tsc(typescript 的 cli 工具)运行，打包出来后注释并没有影响，但是，仔细一瞅 tsc 编译过后的源码就有点奇怪了，
 
 ![tsc编译后的route](../../assets/image/webpack+ts+vue+vue-router的一个坑/tsc编译后的route.jpg)
-> 红色的是被更改过的，而require.ensure确实很坚强的没改变
+
+> 红色的是被更改过的，而 require.ensure 确实很坚强的没改变
 
 根据这个线索往下找
 
 ## 答案初探
-import 会被转换成require是因为tsconfig.json中配置的（`module`为none 默认值也会被转换为commonjs）
-但是，import 到babel-loader那里才会被识别为动态的呀，你直接给整成require了，babel也不认这玩意呀
 
-那咱们就那把module的值改成ESNext(支持转换为import的选项)，但是，问题又来了，ts-node直接执行build/prod.ts（打包的启动器）会导致prod.ts无法运行了，出现了下面的错误，也就是，不能用improt 语法了，你说气不气
+import 会被转换成 require 是因为 tsconfig.json 中配置的（`module`为默认值时也会被转换为 commonjs）
+但是，import 到 babel-loader 那里才会被识别为动态的，你直接给整成 require 了，babel 也不认这玩意
+
+那咱们就那把 module 的值改成 ESNext(支持转换为 import 的选项)，但是，问题又来了，ts-node 直接执行 build/prod.ts（打包的启动器）会导致 prod.ts 无法运行了，出现了下面的错误，也就是，不能用 improt 语法了，你说气不气
+
 ```js
 import webpack from 'webpack';
        ^^^^^^^
 ```
 
-在思考一下，webpack入口以后的文件就不由ts-node来编译了，而是由ts-loader来编译，
-ts-laoder编译的源码是和tsc编译的是一样的（已验证，在ts-loader源码的主入口函数中可以打印观看）那么ts-loader的配置会引用目录顶级的tsconfig.json，但是，这个顶级目录又不能更改，否则webpack都调用不起来
+在思考一下，webpack 入口以后的文件就不由 ts-node 来编译了，而是由 ts-loader 来编译，
+ts-laoder 编译的源码是和 tsc 编译的是一样的（已验证，在 ts-loader 源码的主入口函数中可以打印观看）那么 ts-loader 的配置会引用目录顶级的 tsconfig.json，但是，这个顶级目录又不能更改，否则 webpack 都调用不起来
 
 ## 最终解决
-在看一遍ts-loader的文档，可以自行引用一个配置（configFile(只能路径)），否则就使用最顶级的
+
+在看一遍 ts-loader 的文档，可以自行引用一个配置（configFile(只能路径)），否则就使用最顶级的
+
 ```json
 // tsconfig.prod.json
 {
     "compilerOptions": {
         "target": "ESNext",
         "module": "ESNext",
-        "lib": [
-            "dom",
-            "es5",
-            "es6",
-            "es7",
-            "esnext"
-        ],
+        "lib": ["dom", "es5", "es6", "es7", "esnext"],
         "strict": false,
         "moduleResolution": "node",
         "esModuleInterop": true,
@@ -118,16 +121,11 @@ ts-laoder编译的源码是和tsc编译的是一样的（已验证，在ts-loade
         "experimentalDecorators": true,
         "baseUrl": ".",
         "paths": {
-            "client/*": [
-                "client/*"
-            ]
+            "client/*": ["client/*"]
         }
-    },
+    }
 }
 ```
-
-
-
 
 ```js
 // build/webpack.prod.conf.ts
@@ -153,17 +151,15 @@ ts-laoder编译的源码是和tsc编译的是一样的（已验证，在ts-loade
     ],
 },
 ```
+
 npm run build
 
 ![在次打包后的文件](../../assets/image/webpack+ts+vue+vue-router的一个坑/在次打包后的文件.jpg);
 
-
 至此，完美解决这一问题
 
-
-
-
 有想模仿的朋友可以模仿环境试试
+
 ```ts
 import express from 'express';
 import path from 'path';
@@ -195,5 +191,4 @@ app.use(
     })
 );
 app.listen(12305);
-
 ```

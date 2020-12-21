@@ -22,6 +22,7 @@
     3. [类](./articles/will/ts/3_类.md)
     4. [泛形与重载](articles/will/ts/4_泛形与重载.md)
     5. [各种关键字以及方法](articles/will/ts/5_各种关键字以及方法.md)
+-   [ts 引入项目，会是另一个深坑的开始吗](./articles/will/ts引入项目，会是另一个深坑的开始吗.md)
 
 ## 书籍阅读列表
 
