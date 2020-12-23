@@ -1,17 +1,20 @@
 # 打包优化
 
-## S场景
-Vue项目，打包后单个包超过了1MB，一看打包后的文件，Vue，Vue-router，Vuex，Vuetify(ui框架)都打包在了一起，还有一个core-js@3的(项目原因需要全部引入)，包放在CDN中加载起来也不是很容易。
+## S 场景
 
-## T任务
-分离大的代码包中的代码，然后放置到CDN中。
+Vue 项目，打包后单个包超过了 1MB，一看打包后的文件，Vue，Vue-router，Vuex，Vuetify(ui 框架)都打包在了一起，还有一个 core-js@3 的(项目原因需要全部引入)，包放在 CDN 中加载起来也不是很容易。
 
-## A行动
-已经在webpack.base.conf.ts中配置了optimization.splitChunks，然而效果并不大，并且之前已经了解过了splitChunks.cacheGroups，增对这个查阅官网资料，google，得到一点眉目
+## T 任务
 
-## R结果
-匹配出node_modules里面的包，然后分割
+分离大的代码包中的代码，然后放置到 CDN 中。
 
+## A 行动
+
+已经在 webpack.base.conf.ts 中配置了 optimization.splitChunks，然而效果并不大，并且之前已经了解过了 splitChunks.cacheGroups，增对这个查阅官网资料，google，得到一点眉目
+
+## R 结果
+
+匹配出 node_modules 里面的包，然后分割
 
 ```js
 export default {
@@ -35,7 +38,7 @@ export default {
                     // name不存子则为key值，存在则为name
                     name: 'test1',
                     // 正则匹配
-                    test: /vue/, 
+                    test: /vue/,
                     // 优先级
                     priority: -10,
                     // 拆分前的最小引入次数，为1，则见到就引入
@@ -43,7 +46,7 @@ export default {
                     // 如果包小于这个大小，那么也不会被引入
                     // 引入包的最小值， 默认30000
                     minSize: 30000,
-                    
+
                 },
                 vendors: {
                     test: /[\\/]node_modules[\\/]/,
@@ -57,73 +60,76 @@ export default {
 
 ```
 
-
 上面的属性并不是全部，但都是用来分割代码的关键属性（dog，如果还有，请补充）
 
-
-
-
 # 截图
+
 下面将奉上截图
-> 图片配置只是示例，以react为实验对象是应为刚好建了这个环境
+
+> 图片配置只是示例，以 react 为实验对象是应为刚好建了这个环境
 
 ## 配置
-**入口与出口**
-> ![入口与出口](../../assets/image/webpack打包分割/配置_入口与出口.jpg)
 
+**入口与出口**
+
+> ![入口与出口](../../assets/image/webpack打包分割/配置_入口与出口.jpg)
 
 **optimization**
 以下正常配置都指这个截图
+
 > ![optimization](../../assets/image/webpack打包分割/配置_optimization.jpg)
 
-
 ## 入口文件
+
 **入口结构**
+
 > ![入口结构](../../assets/image/webpack打包分割/文件_入口.jpg)
 
 **入口引入的包**
+
 > ![入口引入的包](../../assets/image/webpack打包分割/入口_引入的文件.jpg)
 
+## 实验 maxInitalRequests 的作用
 
-## 实验maxInitalRequests的作用
 **正常配置**
+
 > ![maxInitalRequests的作用](../../assets/image/webpack打包分割/3_maxInitalRequests.jpg)
 
-**maxInitalRequests: 2时**
+**maxInitalRequests: 2 时**
+
 > ![maxInitalRequests的作用](../../assets/image/webpack打包分割/2_maxInitalRequests.jpg)
 
-**maxInitalRequests: 1时**
+**maxInitalRequests: 1 时**
+
 > ![maxInitalRequests的作用](../../assets/image/webpack打包分割/1_maxInitalRequests.jpg)
 
-可见，maxInitalRequests分离包的个数有了限制，但是要注意，它也只是对inital中的包产生作用，异步的则需另外一个属性
+可见，maxInitalRequests 分离包的个数有了限制，但是要注意，它也只是对 inital 中的包产生作用，异步的则需另外一个属性
 
-注意，如果包的大小超过了maxSize，那么包还是会持续拆分，不受maxInitalRequests的影响
+注意，如果包的大小超过了 maxSize，那么包还是会持续拆分，不受 maxInitalRequests 的影响
 
+## 实验 maxChunks 的作用
 
-## 实验maxChunks的作用
 **正常配置**
-maxChunks全部为1
+maxChunks 全部为 1
+
 > ![maxChunks的作用](../../assets/image/webpack打包分割/1_maxChunks.jpg)
 
-maxChunks全部为2
+maxChunks 全部为 2
+
 > ![maxChunks的作用](../../assets/image/webpack打包分割/2_maxChunks.jpg)
 
+也许上面的截图看不出来什么，我又添加了一个入口(第一个入口时 src/index.tsx，第二个就不放截图了)，再次实验
 
-也许上面的截图看不出来什么，我又添加了一个入口(第一个入口时src/index.tsx，第二个就不放截图了)，再次实验
 > ![maxChinks的作用](../../assets/image/webpack打包分割/当有两个入口_maxChunks.jpg)
 
-app为第一个入口
-app1为第二个入口
-reactDom~app~app1则是它们共同的包，而有差异的都被打包到app.js 或app1.js各自的入口中了，
+app 为第一个入口
+app1 为第二个入口
+reactDom~app~app1 则是它们共同的包，而有差异的都被打包到 app.js 或 app1.js 各自的入口中了，
 
-可以说maxChunks限制了多个入口间引用同一个包(如两个包都引入了React)达到一定次数，才会提取到公共包中，打包后的html就都会引入这个公共包
-
-
-
-
+可以说 maxChunks 限制了多个入口间引用同一个包(如两个包都引入了 React)达到一定次数，才会提取到公共包中，打包后的 html 就都会引入这个公共包
 
 ## maxSize && minSize
 
-minSize限制包的最低值，包如果不超过这个大小就不会被提取
+minSize 限制包的最低值，包如果不超过这个大小就不会被提取
 
-maxSize限制包的最大值，当包提取后大于maxSize的值，就不会在往这个包中继续放置代码，而是另开一个包
+maxSize 限制包的最大值，当包提取后大于 maxSize 的值，就不会在往这个包中继续放置代码，而是另开一个包
