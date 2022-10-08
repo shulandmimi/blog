@@ -282,7 +282,7 @@ function remove_piece(piece: Pieces, offset: number) {
 // 添加棋子
 function add_piece(piece: Pieces, offset: number) {
   const target = 1n << BigInt(offset);
-  this.relation_ship_of_piece(piece).forEach((item) => {
+  relation_ship_of_piece(piece).forEach((item) => {
     // 这里看做为伪代码，这里 item 为 bigint，修改值无法传递过去
     item.assign(item.xor(target));
     // 等同于
@@ -331,5 +331,13 @@ function move({ from, to }: { from: Square; to: Square }) {
 <br />
 
 ## 总结
+
+这边其实缺少了很多东西，比如 `add_piece` 时的伪代码
+
+移动时的 障碍检测、可行路径收集等等
+
+这边可以移步 [chess-bitboard](https://github.com/shulandmimi/chess-bitboard)
+
+> emm，现在由于工作调整，所以个人对此方面的研究也被迫终止，所以棋盘类的都不再进行更新和探索
 
 完~
