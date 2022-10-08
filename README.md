@@ -4,6 +4,7 @@
 
 ## 文章
 
+- [6. 国际象棋 bitboard](articles/will/6_国际象棋_bitboard.md)
 - [5. 国际象棋棋局中，边界、可达性、方位与障碍检测](https://github.com/shulandmimi/chess-impl)
 - [ts 引入项目，会是另一个深坑的开始吗](./articles/will/ts引入项目，会是另一个深坑的开始吗.md)
 - [ts 系列](./articles/will/ts)
